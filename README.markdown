@@ -35,7 +35,7 @@ This is great when you just want a super simple configuration file, but here is 
     database.username = staging
     database.password = 12345
     
-    [production : testing]
+    [production : staging]
     debug = false;
     database.name = production
     database.username = root
