@@ -3,6 +3,9 @@ namespace Test;
 
 use \IniParser;
 
+/**
+ * @author Till Klampaeckel <till@php.net>
+ */
 class IniParserTest extends \PHPUnit_Framework_TestCase
 {
     /**
