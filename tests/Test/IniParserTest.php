@@ -10,10 +10,6 @@ require_once BASE_DIR . '/src/IniParser.php';
 
 class IniParserTest extends \PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-    }
-
     /**
      * This is a test-case I wrote because I think there are small bugs
      * in {@link \IniParser}. Just to see if a very basic .ini would be
