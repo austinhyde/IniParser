@@ -98,7 +98,7 @@ class IniParser
      */
     private function parse_keys(array $arr)
     {
-        $output = array();
+        $output = new ArrayObject(array());
         foreach ($arr as $k=>$v) {
             if (is_array($v)) { // is a section
                 $output[$k] = $this->parse_keys($v);

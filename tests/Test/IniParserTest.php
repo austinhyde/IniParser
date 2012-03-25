@@ -24,7 +24,8 @@ EOF;
         $parseIniString = parse_ini_string($ini, true);
 
         $iniParser = new IniParser();
-        $config    = $iniParser->process($ini);
+        $configObj = $iniParser->process($ini);
+        $config    = $this->phpUnitDoesntUnderstandArrayObject($configObj);
 
         $this->assertSame($config, $parseIniString);
     }
@@ -44,7 +45,8 @@ EOF;
      */
     public function testParser()
     {
-        $config = $this->getConfig('fixture01.ini');
+        $configObj = $this->getConfig('fixture01.ini');
+        $config    = $this->phpUnitDoesntUnderstandArrayObject($configObj);
 
         $this->assertArrayHasKey('production', $config);
 
@@ -66,7 +68,8 @@ EOF;
      */
     public function testInheritance()
     {
-        $config = $this->getConfig('fixture02.ini');
+        $configObj = $this->getConfig('fixture02.ini');
+        $config    = $this->phpUnitDoesntUnderstandArrayObject($configObj);
 
         $this->assertArrayHasKey('prod', $config);
         $this->assertArrayHasKey('dev', $config);
@@ -81,7 +84,8 @@ EOF;
      */
     public function testComplex()
     {
-        $config = $this->getConfig('fixture03.ini');
+        $configObj = $this->getConfig('fixture03.ini');
+        $config    = $this->phpUnitDoesntUnderstandArrayObject($configObj);
 
         $this->assertArrayHasKey('environment', $config);
         $this->assertEquals('testing', $config['environment']);
@@ -118,5 +122,16 @@ EOF;
         $parser = new IniParser(BASE_DIR . '/tests/fixtures/' . $file);
         $config = $parser->parse();
         return $config;
+    }
+
+    protected function phpUnitDoesntUnderstandArrayObject(\ArrayObject $config)
+    {
+        $arr = (array) $config;
+        foreach ($arr as $key => $value) {
+            if ($value instanceof \ArrayObject) {
+                $arr[$key] = $this->phpUnitDoesntUnderstandArrayObject($value);
+            }
+        }
+        return $arr;
     }
 }
