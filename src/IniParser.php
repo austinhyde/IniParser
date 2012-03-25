@@ -71,7 +71,7 @@ class IniParser
 
     /**
      * @param string $file
-     * 
+     *
      * @return \IniParser
      * @throws \InvalidArgumentException
      */
@@ -144,8 +144,8 @@ class IniParser
      */
     protected function parse_value($value)
     {
-        if (preg_match('/\[\s*.*?(?:\s*,\s*.*?)*\s*\]/',$v)) {
-            return explode(',',trim(preg_replace('/\s+/','',$v),'[]'));
+        if (preg_match('/\[\s*.*?(?:\s*,\s*.*?)*\s*\]/',$value)) {
+            return explode(',',trim(preg_replace('/\s+/','',$value),'[]'));
         }
     }
 }
