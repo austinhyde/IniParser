@@ -14,9 +14,18 @@
 
 class IniParser
 {
-    public function __construct()
-    {
+    protected $file;
 
+    /**
+     * @param string $file
+     *
+     * @return \IniParser
+     */
+    public function __construct($file = null)
+    {
+        if ($file !== null) {
+            $this->setFile($file);
+        }
     }
 
     /**
@@ -25,9 +34,12 @@ class IniParser
      * @param string $file
      * @return array
      */
-    public function parse($file)
+    public function parse($file = null)
     {
-        return $this->process(file_get_contents($file));
+        if ($file !== null) {
+            $this->setFile($file);
+        }
+        return $this->process(file_get_contents($this->file));
     }
 
     /**
@@ -55,6 +67,20 @@ class IniParser
             $inheritance_parsed[$root] = $arr;
         }
         return $this->parse_keys($inheritance_parsed);
+    }
+
+    /**
+     * @param string $file
+     * 
+     * @return \IniParser
+     * @throws \InvalidArgumentException
+     */
+    public function setFile($file)
+    {
+        if (!file_exists($file) || !is_readable($file)) {
+            throw new \InvalidArgumentException("The file '{$file}' cannot be opened.");
+        }
+        return $this;
     }
 
     /**
