@@ -22,8 +22,8 @@ class IniParser {
      * @param string $file
      * @return void
      */
-    public function parseFile($file) {
-        return $this->parse(file_get_contents($file));
+    public function parse($file) {
+        return $this->process(file_get_contents($file));
     }
 
     /**
@@ -32,7 +32,7 @@ class IniParser {
      * @param string $src
      * @return void
      */
-    public function parse($src) {
+    public function process($src) {
         $simple_parsed = parse_ini_string($src, true);
         $inheritance_parsed = array();
         foreach ($simple_parsed as $k=>$v) {
