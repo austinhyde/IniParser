@@ -140,12 +140,14 @@ class IniParser
      * Parses and formats the value in a key-value pair
      *
      * @param string $value
-     * @return void
+     *
+     * @return mixed
      */
     protected function parse_value($value)
     {
         if (preg_match('/\[\s*.*?(?:\s*,\s*.*?)*\s*\]/',$value)) {
             return explode(',',trim(preg_replace('/\s+/','',$value),'[]'));
         }
+        return $value;
     }
 }
