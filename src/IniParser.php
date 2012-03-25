@@ -43,6 +43,9 @@ class IniParser
         if ($file !== null) {
             $this->setFile($file);
         }
+        if (empty($this->file)) {
+            throw new \LogicException("Need a file to parse.");
+        }
         return $this->process(file_get_contents($this->file));
     }
 
