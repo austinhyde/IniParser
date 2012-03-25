@@ -43,6 +43,11 @@ EOF;
         new IniParser('/this/should/never/exist.ini');
     }
 
+    /**
+     * A slightly more complex test to confirm parsing works.
+     *
+     * @return void
+     */
     public function testParser()
     {
         $file   = BASE_DIR . '/tests/fixtures/fixture01.ini';
