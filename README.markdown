@@ -45,7 +45,7 @@ And when parsed with IniParser:
     array(
         'environment' => 'testing',
         'testing' => array(
-            'debug' => 'true',
+            'debug' => '1',
             'database' => array(
                 'connection' => 'mysql:host=127.0.0.1',
                 'name' => 'test',
@@ -55,7 +55,7 @@ And when parsed with IniParser:
             'secrets' => array('1','2','3')
         ),
         'staging' => array(
-            'debug' => 'true',
+            'debug' => '1',
             'database' => array(
                 'connection' => 'mysql:host=127.0.0.1',
                 'name' => 'stage',
@@ -65,7 +65,7 @@ And when parsed with IniParser:
             'secrets' => array('1','2','3')
         ),
         'production' => array(
-            'debug' => 'false',
+            'debug' => '',
             'database' => array(
                 'connection' => 'mysql:host=127.0.0.1',
                 'name' => 'production',

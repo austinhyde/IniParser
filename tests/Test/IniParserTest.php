@@ -96,6 +96,10 @@ EOF;
 
         $this->assertEmpty($config['testing']['database']['password']);
         $this->assertEquals($config['staging']['database']['password'], $config['production']['database']['password']);
+
+        $this->assertEquals('1', $config['testing']['debug']);
+        $this->assertEquals('1', $config['staging']['debug']);
+        $this->assertEquals('', $config['production']['debug']);
     }
 
     /**
