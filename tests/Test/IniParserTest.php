@@ -3,8 +3,10 @@ namespace Test;
 
 use \IniParser;
 
+define('BASE_DIR', dirname(dirname(__DIR__)));
+
 // FIXME
-require_once dirname(dirname(__DIR__)) . '/src/IniParser.php';
+require_once BASE_DIR . '/src/IniParser.php';
 
 class IniParserTest extends \PHPUnit_Framework_TestCase
 {
