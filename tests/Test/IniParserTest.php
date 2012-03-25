@@ -67,4 +67,21 @@ EOF;
         $this->assertArrayHasKey('funny', $super);
         $this->assertEquals('config', $super['funny']);
     }
+
+    /**
+     * Confirm that the 'dev' environment inherits all values from the 'prod' environment.
+     *
+     * @return void
+     */
+    public function testInheritance()
+    {
+        $file   = BASE_DIR . '/tests/fixtures/fixture02.ini';
+        $parser = new IniParser($file);
+        $config = $parser->parse();
+
+        $this->assertArrayHasKey('prod', $config);
+        $this->assertArrayHasKey('dev', $config);
+
+        $this->assertSame($config['prod'], $config['dev']);
+    }
 }
