@@ -24,7 +24,7 @@ This is great when you just want a super simple configuration file, but here is 
     
     [testing]
     debug = true
-    database.connection = mysql:host=127.0.0.1
+    database.connection = "mysql:host=127.0.0.1"
     database.name = test
     database.username = 
     database.password =
@@ -35,7 +35,7 @@ This is great when you just want a super simple configuration file, but here is 
     database.username = staging
     database.password = 12345
     
-    [production : testing]
+    [production : staging]
     debug = false;
     database.name = production
     database.username = root
@@ -45,7 +45,7 @@ And when parsed with IniParser:
     array(
         'environment' => 'testing',
         'testing' => array(
-            'debug' => 'true',
+            'debug' => '1',
             'database' => array(
                 'connection' => 'mysql:host=127.0.0.1',
                 'name' => 'test',
@@ -55,7 +55,7 @@ And when parsed with IniParser:
             'secrets' => array('1','2','3')
         ),
         'staging' => array(
-            'debug' => 'true',
+            'debug' => '1',
             'database' => array(
                 'connection' => 'mysql:host=127.0.0.1',
                 'name' => 'stage',
@@ -65,7 +65,7 @@ And when parsed with IniParser:
             'secrets' => array('1','2','3')
         ),
         'production' => array(
-            'debug' => 'false',
+            'debug' => '',
             'database' => array(
                 'connection' => 'mysql:host=127.0.0.1',
                 'name' => 'production',

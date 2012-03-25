@@ -1,0 +1,5 @@
+<phpunit colors="true" bootstrap="./tests/bootstrap.php">
+    <testsuite name="IniParserTest">
+        <directory>./tests/Test</directory>
+    </testsuite>
+</phpunit>
