@@ -14,6 +14,10 @@
 
 class IniParser
 {
+    /**
+     * Filename of our .ini file.
+     * @var string
+     */
     protected $file;
 
     /**
