@@ -26,6 +26,7 @@ class IniParserTest extends \PHPUnit_Framework_TestCase
 hello = world
 EOF;
         $parseIniString = parse_ini_string($ini, true);
+
         $iniParser = new IniParser();
         $config    = $iniParser->process($ini);
 
