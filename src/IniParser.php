@@ -80,6 +80,7 @@ class IniParser
         if (!file_exists($file) || !is_readable($file)) {
             throw new \InvalidArgumentException("The file '{$file}' cannot be opened.");
         }
+        $this->file = $file;
         return $this;
     }
 
