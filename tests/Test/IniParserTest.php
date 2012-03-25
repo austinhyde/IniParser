@@ -34,4 +34,12 @@ EOF;
 
         $this->assertSame($config, $parseIniString);
     }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testConfigNotFound()
+    {
+        new IniParser('/this/should/never/exist.ini');
+    }
 }
