@@ -59,8 +59,8 @@ class IniParser
                 continue;
             }
             $sects = array_map('trim',array_reverse(explode(':',$k)));
-            $root = array_pop($sects);
-            $arr = $v;
+            $root  = array_pop($sects);
+            $arr   = $v;
             foreach ($sects as $s) {
                 $arr = array_merge($inheritance_parsed[$s],$arr);
             }
