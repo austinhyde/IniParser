@@ -50,10 +50,7 @@ EOF;
      */
     public function testParser()
     {
-        $file   = BASE_DIR . '/tests/fixtures/fixture01.ini';
-        $parser = new IniParser($file);
-
-        $config = $parser->parse();
+        $config = $this->getConfig('fixture01.ini');
 
         $this->assertArrayHasKey('production', $config);
 
@@ -75,9 +72,7 @@ EOF;
      */
     public function testInheritance()
     {
-        $file   = BASE_DIR . '/tests/fixtures/fixture02.ini';
-        $parser = new IniParser($file);
-        $config = $parser->parse();
+        $config = $this->getConfig('fixture02.ini');
 
         $this->assertArrayHasKey('prod', $config);
         $this->assertArrayHasKey('dev', $config);
