@@ -124,6 +124,13 @@ EOF;
         return $config;
     }
 
+    /**
+     * Tested with 3.6.x so far. See {@link PHPUnit_Runner_Version::id()}.
+     *
+     * @param \ArrayObject $config
+     *
+     * @return array
+     */
     protected function phpUnitDoesntUnderstandArrayObject(\ArrayObject $config)
     {
         $arr = (array) $config;
