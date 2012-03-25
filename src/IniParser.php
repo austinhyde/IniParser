@@ -7,11 +7,11 @@
  * * Property nesting
  * * Simple arrays
  * 
- * Compatible with PHP 5.2.3 and up
+ * Compatible with PHP 5.3.0+
  * 
  * @author Austin Hyde
+ * @author Till Klampaeckel <till@php.net>
  */
-
 class IniParser
 {
     /**
