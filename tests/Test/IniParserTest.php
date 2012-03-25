@@ -90,16 +90,20 @@ EOF;
         $this->assertArrayHasKey('staging', $config);
         $this->assertArrayHasKey('production', $config);
 
-        $this->assertEquals('', $config['testing']['database']['username']);
-        $this->assertEquals('staging', $config['staging']['database']['username']);
-        $this->assertEquals('root', $config['production']['database']['username']);
+        $confTesting = $config['testing'];
+        $confStaging = $config['staging'];
+        $confProd    = $config['production'];
 
-        $this->assertEmpty($config['testing']['database']['password']);
-        $this->assertEquals($config['staging']['database']['password'], $config['production']['database']['password']);
+        $this->assertEquals('', $confTesting['database']['username']);
+        $this->assertEquals('staging', $confStaging['database']['username']);
+        $this->assertEquals('root', $confProd['database']['username']);
 
-        $this->assertEquals('1', $config['testing']['debug']);
-        $this->assertEquals('1', $config['staging']['debug']);
-        $this->assertEquals('', $config['production']['debug']);
+        $this->assertEmpty($confTesting['database']['password']);
+        $this->assertEquals($confStaging['database']['password'], $confProd['database']['password']);
+
+        $this->assertEquals('1', $confTesting['debug']);
+        $this->assertEquals('1', $confStaging['debug']);
+        $this->assertEquals('', $confProd['debug']);
     }
 
     /**
