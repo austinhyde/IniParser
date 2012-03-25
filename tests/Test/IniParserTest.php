@@ -75,4 +75,42 @@ EOF;
 
         $this->assertSame($config['prod'], $config['dev']);
     }
+
+    /**
+     * This is the example from the README.
+     *
+     * @return void
+     */
+    public function testComplex()
+    {
+        $config = $this->getConfig('fixture03.ini');
+
+        $this->assertArrayHasKey('environment', $config);
+        $this->assertEquals('testing', $config['environment']);
+
+        $this->assertArrayHasKey('testing', $config);
+        $this->assertArrayHasKey('staging', $config);
+        $this->assertArrayHasKey('production', $config);
+
+        $this->assertEquals('', $config['testing']['database']['username']);
+        $this->assertEquals('staging', $config['staging']['database']['username']);
+        $this->assertEquals('root', $config['production']['database']['username']);
+
+        $this->assertEmpty($config['testing']['database']['password']);
+        $this->assertEquals($config['staging']['database']['password'], $config['production']['database']['password']);
+    }
+
+    /**
+     * Create a config array (from the given fixture).
+     *
+     * @param $file
+     *
+     * @return array
+     */
+    protected function getConfig($file)
+    {
+        $parser = new IniParser(BASE_DIR . '/tests/fixtures/' . $file);
+        $config = $parser->parse();
+        return $config;
+    }
 }
