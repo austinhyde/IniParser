@@ -1,4 +1,8 @@
+# IniParser
+
 IniParser is a really simple parser for "complex" INI files.
+
+## Examples
 
 Standard INI files look like this:
 
@@ -17,6 +21,8 @@ And when parsed with PHP's built-in `parse_ini_string()` or `parse_ini_file()`, 
             'a_sub_key' => 'yet another value'
         )
     )
+
+### Complex example
 
 This is great when you just want a super simple configuration file, but here is a super-charged INI file that you might find in the wild:
 
@@ -76,6 +82,16 @@ And when parsed with IniParser:
         )
     )
 
+### Additional Features
+
 As you can see, IniParser supports section inheritance with `[child : parent]`, property nesting with `a.b.c = d`, and simple arrays with `[a,b,c]`.
 
 Additionally, you can sub-class IniParser and override the `parse_key()` and `parse_value()` methods to customize how it parses keys and values.
+
+### ArrayObject
+
+As an added bonus, IniParser also allows you to access the values OO-style:
+
+    echo $config->production->database->connection; // output: mysql:host=127.0.0.1
+    echo $config->staging->debug; // output: 1
+
