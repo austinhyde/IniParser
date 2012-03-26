@@ -98,26 +98,30 @@ class IniParser
      */
     private function parse_keys(array $arr)
     {
-        $output = array();
+        $output = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
         foreach ($arr as $k=>$v) {
-            if (is_array($v)) { // is a section
+            if (true === is_array($v)) { // is a section
                 $output[$k] = $this->parse_keys($v);
                 continue;
             }
 
             // not a section
             $v = $this->parse_value($v);
-            if (strpos($k,'.')===false) {
+            if (false === strpos($k,'.')) {
                 $output[$k] = $v;
             } else {
-                $output = $this->rec_keys(explode('.',$k),$v,$output);
+                $output = $this->rec_keys(
+                    explode('.', $k),
+                    $v,
+                    $output
+                );
             }
         }
 
         return $output;
     }
 
-    protected function rec_keys($keys,$value,$parent)
+    protected function rec_keys($keys, $value, $parent)
     {
         if (!$keys) {
             return $value;
@@ -125,7 +129,7 @@ class IniParser
 
         $k = $this->parse_value(array_shift($keys));
         if (!array_key_exists($k,$parent)) {
-            $parent[$k] = array();
+            $parent[$k] = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
         }
 
         $v          = $this->rec_keys($keys,$value,$parent[$k]);
