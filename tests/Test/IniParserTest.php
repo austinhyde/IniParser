@@ -96,6 +96,19 @@ EOF;
     }
 
     /**
+     * Make sure stacked configuration settings are always 'ArrayObject'.
+     *
+     * @return void
+     */
+    public function testArrayObjectComplex()
+    {
+        $configObj = $this->getConfig('fixture03.ini');
+
+        $this->assertInstanceOf('\ArrayObject', $configObj->production->database);
+        $this->assertEquals('mysql:host=127.0.0.1', $configObj->production->database->connection);
+    }
+
+    /**
      * This is the example from the README.
      *
      * @return void
