@@ -100,24 +100,28 @@ class IniParser
     {
         $output = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
         foreach ($arr as $k=>$v) {
-            if (is_array($v)) { // is a section
+            if (true === is_array($v)) { // is a section
                 $output[$k] = $this->parse_keys($v);
                 continue;
             }
 
             // not a section
             $v = $this->parse_value($v);
-            if (strpos($k,'.')===false) {
+            if (false === strpos($k,'.')) {
                 $output[$k] = $v;
             } else {
-                $output = $this->rec_keys(explode('.',$k),$v,$output);
+                $output = $this->rec_keys(
+                    explode('.', $k),
+                    $v,
+                    $output
+                );
             }
         }
 
         return $output;
     }
 
-    protected function rec_keys($keys,$value,$parent)
+    protected function rec_keys($keys, $value, $parent)
     {
         if (!$keys) {
             return $value;
