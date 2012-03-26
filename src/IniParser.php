@@ -129,7 +129,7 @@ class IniParser
 
         $k = $this->parse_value(array_shift($keys));
         if (!array_key_exists($k,$parent)) {
-            $parent[$k] = array();
+            $parent[$k] = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
         }
 
         $v          = $this->rec_keys($keys,$value,$parent[$k]);
