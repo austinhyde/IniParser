@@ -78,6 +78,24 @@ EOF;
     }
 
     /**
+     * Test ArrayObject implementation so we can access the configuration
+     * OO-style.
+     *
+     * @return void
+     */
+    public function testArrayObject()
+    {
+        $configObj = $this->getConfig('fixture02.ini');
+
+        $this->assertObjectHasAttribute('prod', $configObj);
+        $this->assertObjectHasAttribute('dev', $configObj);
+
+        $this->assertEquals($configObj->prod, $configObj->dev);
+        $this->assertEquals('world', $configObj->dev->hello);
+        $this->assertEquals('world', $configObj->prod->hello);
+    }
+
+    /**
      * This is the example from the README.
      *
      * @return void
