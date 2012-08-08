@@ -1,0 +1,21 @@
+{
+    "name": "till/iniparser",
+    "description": "A Zend_Config_Ini like parser for .ini files.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Austin Hyde"
+        },
+        {
+            "name": "Till Klampaeckel",
+            "email": "till@php.net"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "IniParser":"src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
