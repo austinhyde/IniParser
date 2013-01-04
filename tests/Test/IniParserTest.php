@@ -139,6 +139,9 @@ EOF;
         $this->assertEquals('1', $confTesting['debug']);
         $this->assertEquals('1', $confStaging['debug']);
         $this->assertEquals('', $confProd['debug']);
+
+        $this->assertEquals(array('1','2','3'), $confTesting['secrets']);
+        $this->assertEquals(array('1','2','3'), $confProd['secrets']);
     }
 
     /**
