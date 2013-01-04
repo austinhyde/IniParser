@@ -73,7 +73,7 @@ class IniParser
             }
             $inheritance_parsed[$root] = $arr;
         }
-        return $this->parse_keys($inheritance_parsed);
+        return $this->parseKeys($inheritance_parsed);
     }
 
     /**
@@ -96,21 +96,21 @@ class IniParser
      *
      * @return array
      */
-    private function parse_keys(array $arr)
+    private function parseKeys(array $arr)
     {
         $output = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
         foreach ($arr as $k=>$v) {
             if (true === is_array($v)) { // is a section
-                $output[$k] = $this->parse_keys($v);
+                $output[$k] = $this->parseKeys($v);
                 continue;
             }
 
             // not a section
-            $v = $this->parse_value($v);
+            $v = $this->parseValue($v);
             if (false === strpos($k,'.')) {
                 $output[$k] = $v;
             } else {
-                $output = $this->rec_keys(
+                $output = $this->recursiveParseKeys(
                     explode('.', $k),
                     $v,
                     $output
@@ -121,18 +121,18 @@ class IniParser
         return $output;
     }
 
-    protected function rec_keys($keys, $value, $parent)
+    protected function recursiveParseKeys($keys, $value, $parent)
     {
         if (!$keys) {
             return $value;
         }
 
-        $k = $this->parse_value(array_shift($keys));
+        $k = $this->parseValue(array_shift($keys));
         if (!array_key_exists($k,$parent)) {
             $parent[$k] = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
         }
 
-        $v          = $this->rec_keys($keys,$value,$parent[$k]);
+        $v          = $this->recursiveParseKeys($keys,$value,$parent[$k]);
         $parent[$k] = $v;
         return $parent;
     }
@@ -143,7 +143,7 @@ class IniParser
      * @param string $key
      * @return string
      */
-    protected function parse_key($key)
+    protected function parseKey($key)
     {
         return $key;
     }
@@ -155,7 +155,7 @@ class IniParser
      *
      * @return mixed
      */
-    protected function parse_value($value)
+    protected function parseValue($value)
     {
         if (preg_match('/\[\s*.*?(?:\s*,\s*.*?)*\s*\]/',$value)) {
             return explode(',',trim(preg_replace('/\s+/','',$value),'[]'));

@@ -86,7 +86,7 @@ And when parsed with IniParser:
 
 As you can see, IniParser supports section inheritance with `[child : parent]`, property nesting with `a.b.c = d`, and simple arrays with `[a,b,c]`.
 
-Additionally, you can sub-class IniParser and override the `parse_key()` and `parse_value()` methods to customize how it parses keys and values.
+Additionally, you can sub-class IniParser and override the `parseKey()` and `parseValue()` methods to customize how it parses keys and values.
 
 ### ArrayObject
 
