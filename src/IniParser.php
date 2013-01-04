@@ -127,7 +127,7 @@ class IniParser
             return $value;
         }
 
-        $k = $this->parseValue(array_shift($keys));
+        $k = array_shift($keys);
         if (!array_key_exists($k,$parent)) {
             $parent[$k] = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
         }
@@ -135,17 +135,6 @@ class IniParser
         $v          = $this->recursiveParseKeys($keys,$value,$parent[$k]);
         $parent[$k] = $v;
         return $parent;
-    }
-
-    /**
-     * Parses and formats the key in a key-value pair
-     *
-     * @param string $key
-     * @return string
-     */
-    protected function parseKey($key)
-    {
-        return $key;
     }
 
     /**
