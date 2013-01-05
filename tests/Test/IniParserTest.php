@@ -159,6 +159,17 @@ EOF;
     }
 
     /**
+     * Test appending values during inheritance
+     */
+    public function testAppendValues()
+    {
+        $configObj = $this->getConfig('fixture04.ini');
+
+        $this->assertEquals(array('a','b','c','x','y','z'), $configObj['sect3']['array1']);
+        $this->assertEquals('barbaz', $configObj['sect3']['foo']);
+    }
+
+    /**
      * This is the example from the README.
      *
      * @return void

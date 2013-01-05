@@ -132,21 +132,46 @@ class IniParser
         $output = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
         foreach ($arr as $k=>$v) {
             if (is_array($v)) {
-                // recursively parse the value
+                // this element represents a section; recursively parse the value
                 $output[$k] = $this->parseKeys($v);
             } else {
                 // value is just a value
+                // if the key ends in a +, it means we should append to the previous value, if applicable
+                $append = false;
+                if (preg_match('/\s*\+\s*$/',$k) > 0) {
+                    $k = preg_replace('/\s*\+\s*$/', '', $k);
+                    $append = true;
+                }
+
                 // transform "a.b.c = x" into $output[a][b][c] = x
                 $path = explode('.', $k);
 
                 $current =& $output;
                 while (($current_key = array_shift($path))) {
                     if (!array_key_exists($current_key, $current)) {
-                        $current[$current_key] = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
+                        if (!empty($path)) {
+                            $current[$current_key] = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
+                        } else {
+                            $current[$current_key] = null;
+                        }
                     }
                     $current =& $current[$current_key];
                 }
-                $current = $this->parseValue($v);
+
+                $value = $this->parseValue($v);
+
+                if ($append && $current !== null) {
+                    if (is_array($value)) {
+                        if (!is_array($current)) {
+                            throw new \LogicException("Cannot append array to inherited value '{$k}'");
+                        }
+                        $value = array_merge($current, $value);
+                    } else {
+                        $value = $current . $value;
+                    }
+                }
+
+                $current = $value;
             }
         }
 
