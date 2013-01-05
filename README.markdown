@@ -1,8 +1,10 @@
 # IniParser
 
-IniParser is a really simple parser for "complex" INI files.
+IniParser is a simple parser for complex INI files, providing a number of extra syntactic features to the built-in INI parsing functions, including section inheritance, property nesting, and array literals.
 
-## Examples
+**IMPORTANT:** IniParser should be considered beta-quality, and there may still be bugs. Feel free to open an issue or submit a pull request, and I'll take a look at it!
+
+## An Example
 
 Standard INI files look like this:
 
@@ -22,9 +24,7 @@ And when parsed with PHP's built-in `parse_ini_string()` or `parse_ini_file()`, 
         )
     )
 
-### Complex example
-
-This is great when you just want a super simple configuration file, but here is a super-charged INI file that you might find in the wild:
+This is great when you just want a simple configuration file, but here is a super-charged INI file that you might find in the wild:
 
     environment = testing
     
@@ -47,6 +47,11 @@ This is great when you just want a super simple configuration file, but here is 
     database.username = root
 
 And when parsed with IniParser:
+
+    $parser = new \IniParser('sample.ini');
+    $config = $parser->parse();
+
+You get the following structure:
 
     array(
         'environment' => 'testing',
@@ -82,11 +87,81 @@ And when parsed with IniParser:
         )
     )
 
-### Additional Features
+## Supported Features
 
-As you can see, IniParser supports section inheritance with `[child : parent]`, property nesting with `a.b.c = d`, and simple arrays with `[a,b,c]`.
+### Array Literals
 
-Additionally, you can sub-class IniParser and override the `parseValue()` method to customize how it parses values.
+You can directly create arrays using the syntax `[a, b, c]` on the right hand side of an assignment. For example:
+
+    colors = [blue, green, red]
+
+**NOTE:** At the moment, quoted strings inside array literals have undefined behavior.
+
+### Property Nesting
+
+IniParser allows you to treat properties as associative arrays:
+
+    person.age = 42
+    person.name.first = John
+    person.name.last = Doe
+
+This turns into an array like:
+
+    array (
+        'person' => array (
+            'age' => 42,
+            'name' => array (
+                'first' => 'John',
+                'last' => 'Doe'
+            )
+        )
+    )
+
+### Section Inheritance
+
+Keeping to the DRY principle, IniParser allows you to "inherit" from other sections (similar to OOP inheritance), meaning you don't have to continually re-define the same properties over and over again. As you can see in the example above, "production" inherits from "staging", which in turn inherits from "testing".
+
+You can even inherit from multiple parents, as in `[child : p1 : p2 : p3]`. The properties of each parent are merged into the child from left to right, so that the properties in `p1` are overridden by those in `p2`, then by `p3`, then by those in `child` on top of that.
+
+During the inheritance process, if a key ends in a `+`, the merge behavior changes from overwriting the parent value to prepending the parent value (or appending the child value - same thing). So the example file
+
+    [parent]
+    arr = [a,b,c]
+    val = foo
+
+    [child : parent]
+    arr += [x,y,z]
+    val += bar
+
+would be parsed into the following:
+
+    array (
+        'parent' => array (
+            'arr' => array('a','b','c'),
+            'val' => 'foo'
+        ),
+        'child' => array (
+            'arr' => array('a','b','c','x','y','z'),
+            'val' => 'foobar'
+        )
+    )
+
+*If you can think of a more useful operation than concatenation for non-array types, please open an issue*
+
+Finally, it is possible to inherit from the special `^` section, representing the top-level or global properties:
+
+    foo = bar
+
+    [sect : ^]
+
+Parses to:
+
+    array (
+        'foo' => 'bar',
+        'sect' => array (
+            'foo' => 'bar'
+        )
+    )
 
 ### ArrayObject
 
@@ -94,4 +169,3 @@ As an added bonus, IniParser also allows you to access the values OO-style:
 
     echo $config->production->database->connection; // output: mysql:host=127.0.0.1
     echo $config->staging->debug; // output: 1
-

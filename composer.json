@@ -5,7 +5,8 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Austin Hyde"
+            "name": "Austin Hyde",
+            "email": "austin109@gmail.com"
         },
         {
             "name": "Till Klampaeckel",
@@ -17,5 +18,6 @@
             "IniParser":"src/"
         }
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "keywords": ["configuration"]
 }
