@@ -136,6 +136,16 @@ EOF;
     }
 
     /**
+     * Test that inheriting from an undefined section gives a nice error
+     *
+     * @expectedException \UnexpectedValueException
+     */
+    public function testInvalidSectionReference()
+    {
+        $configObj = $this->getConfig('fixture06.ini');
+    }
+
+    /**
      * This is the example from the README.
      *
      * @return void
