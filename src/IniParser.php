@@ -100,41 +100,26 @@ class IniParser
     {
         $output = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
         foreach ($arr as $k=>$v) {
-            if (true === is_array($v)) { // is a section
+            if (is_array($v)) {
+                // recursively parse the value
                 $output[$k] = $this->parseKeys($v);
-                continue;
-            }
-
-            // not a section
-            $v = $this->parseValue($v);
-            if (false === strpos($k,'.')) {
-                $output[$k] = $v;
             } else {
-                $output = $this->recursiveParseKeys(
-                    explode('.', $k),
-                    $v,
-                    $output
-                );
+                // value is just a value
+                // transform "a.b.c = x" into $output[a][b][c] = x
+                $path = explode('.', $k);
+
+                $current =& $output;
+                while (($current_key = array_shift($path))) {
+                    if (!array_key_exists($current_key, $current)) {
+                        $current[$current_key] = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
+                    }
+                    $current =& $current[$current_key];
+                }
+                $current = $this->parseValue($v);
             }
         }
 
         return $output;
-    }
-
-    protected function recursiveParseKeys($keys, $value, $parent)
-    {
-        if (!$keys) {
-            return $value;
-        }
-
-        $k = array_shift($keys);
-        if (!array_key_exists($k,$parent)) {
-            $parent[$k] = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
-        }
-
-        $v          = $this->recursiveParseKeys($keys,$value,$parent[$k]);
-        $parent[$k] = $v;
-        return $parent;
     }
 
     /**
@@ -146,7 +131,8 @@ class IniParser
      */
     protected function parseValue($value)
     {
-        if (preg_match('/\[\s*.*?(?:\s*,\s*.*?)*\s*\]/',$value)) {
+        // if the value looks like [a,b,c,...], interpret as array
+        if (preg_match('/\[\s*.*?(?:\s*,\s*.*?)*\s*\]/',$value) > 0) {
             return explode(',',trim(preg_replace('/\s+/','',$value),'[]'));
         }
         return $value;
