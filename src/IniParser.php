@@ -59,20 +59,7 @@ class IniParser
     public function process($src)
     {
         $simple_parsed      = parse_ini_string($src, true);
-        $inheritance_parsed = array();
-        foreach ($simple_parsed as $k=>$v) {
-            if (false === strpos($k,':')) {
-                $inheritance_parsed[$k] = $v;
-                continue;
-            }
-            $sects = array_map('trim',array_reverse(explode(':',$k)));
-            $root  = array_pop($sects);
-            $arr   = $v;
-            foreach ($sects as $s) {
-                $arr = array_merge($inheritance_parsed[$s],$arr);
-            }
-            $inheritance_parsed[$root] = $arr;
-        }
+        $inheritance_parsed = $this->parseSections($simple_parsed);
         return $this->parseKeys($inheritance_parsed);
     }
 
@@ -89,6 +76,44 @@ class IniParser
         }
         $this->file = $file;
         return $this;
+    }
+
+    /**
+     * Parse sections and inheritance.
+     * @param  array  $simple_parsed
+     * @return array  Parsed sections
+     */
+    private function parseSections(array $simple_parsed)
+    {
+        // do an initial pass to gather section names
+        $sections = array();
+        $globals = array();
+        foreach ($simple_parsed as $k=>$v) {
+            if (is_array($v)) {
+                // $k is a section name
+                $sections[$k] = $v;
+            } else {
+                $globals[$k] = $v;
+            }
+        }
+
+        // now for each section, see if it uses inheritance
+        foreach ($sections as $k=>$v) {
+            if (false === strpos($k,':')) {
+                continue;
+            }
+
+            $sects = array_map('trim',array_reverse(explode(':',$k)));
+            $root  = array_pop($sects);
+            $arr   = $v;
+            foreach ($sects as $s) {
+                $arr = array_merge($sections[$s],$arr);
+            }
+            $sections[$root] = $arr;
+        }
+
+
+        return array_merge($globals, $sections);
     }
 
     /**

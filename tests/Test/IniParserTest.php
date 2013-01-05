@@ -125,6 +125,17 @@ EOF;
     }
 
     /**
+     * Test that inheriting from a section defined later works
+     */
+    public function testForwardReferenceInheritance()
+    {
+        $configObj = $this->getConfig('fixture05.ini');
+
+        $this->assertEquals('xyz', $configObj['s2']['value']);
+        $this->assertEquals('abc', $configObj['s1']['value']);
+    }
+
+    /**
      * This is the example from the README.
      *
      * @return void
