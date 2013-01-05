@@ -146,6 +146,19 @@ EOF;
     }
 
     /**
+     * Test section inheritance from the top level
+     *
+     * @return void
+     */
+    public function testSectionInheritGlobal()
+    {
+        $configObj = $this->getConfig('fixture04.ini');
+
+        $this->assertEquals('bar', $configObj['sect2']['foo']);
+        $this->assertEquals($configObj['array1'], $configObj['sect2']['array1']);
+    }
+
+    /**
      * This is the example from the README.
      *
      * @return void
