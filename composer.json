@@ -1,5 +1,5 @@
 {
-    "name": "till/iniparser",
+    "name": "austinhyde/iniparser",
     "description": "A Zend_Config_Ini like parser for .ini files.",
     "type": "library",
     "license": "MIT",
