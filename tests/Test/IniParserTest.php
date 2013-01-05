@@ -109,6 +109,22 @@ EOF;
     }
 
     /**
+     * Test that array literals are parsed correctly
+     *
+     * @return void
+     */
+    public function testArrayLiteral()
+    {
+        $configObj = $this->getConfig('fixture04.ini');
+
+        $this->assertInternalType('array', $configObj['array1']);
+        $this->assertEquals(array('a','b','c'), $configObj['array1']);
+
+        $this->assertInternalType('array', $configObj['sect1']['array2']);
+        $this->assertEquals(array('d','e','f'), $configObj['sect1']['array2']);
+    }
+
+    /**
      * This is the example from the README.
      *
      * @return void
@@ -139,9 +155,6 @@ EOF;
         $this->assertEquals('1', $confTesting['debug']);
         $this->assertEquals('1', $confStaging['debug']);
         $this->assertEquals('', $confProd['debug']);
-
-        $this->assertEquals(array('1','2','3'), $confTesting['secrets']);
-        $this->assertEquals(array('1','2','3'), $confProd['secrets']);
     }
 
     /**
