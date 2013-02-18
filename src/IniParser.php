@@ -119,7 +119,7 @@ class IniParser
         }
 
 
-        return array_merge($globals, $sections);
+        return $globals + $sections;
     }
 
     /**
