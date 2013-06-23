@@ -1,16 +1,13 @@
 <?php
-namespace Test;
-
-use \IniParser;
 
 /**
  * @author Till Klampaeckel <till@php.net>
  */
-class IniParserTest extends \PHPUnit_Framework_TestCase
+class IniParserTest extends PHPUnit_Framework_TestCase
 {
     /**
      * This is a test-case I wrote because I think there are small bugs
-     * in {@link \IniParser}. Just to see if a very basic .ini would be
+     * in {@link IniParser}. Just to see if a very basic .ini would be
      * parsed as expected.
      *
      * @return void
@@ -31,7 +28,7 @@ EOF;
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException InvalidArgumentException
      */
     public function testConfigNotFound()
     {
@@ -104,7 +101,7 @@ EOF;
     {
         $configObj = $this->getConfig('fixture03.ini');
 
-        $this->assertInstanceOf('\ArrayObject', $configObj->production->database);
+        $this->assertInstanceOf('ArrayObject', $configObj->production->database);
         $this->assertEquals('mysql:host=127.0.0.1', $configObj->production->database->connection);
     }
 
@@ -138,7 +135,7 @@ EOF;
     /**
      * Test that inheriting from an undefined section gives a nice error
      *
-     * @expectedException \UnexpectedValueException
+     * @expectedException UnexpectedValueException
      */
     public function testInvalidSectionReference()
     {
@@ -270,15 +267,15 @@ EOF;
     /**
      * Tested with 3.6.x so far. See {@link PHPUnit_Runner_Version::id()}.
      *
-     * @param \ArrayObject $config
+     * @param ArrayObject $config
      *
      * @return array
      */
-    protected function phpUnitDoesntUnderstandArrayObject(\ArrayObject $config)
+    protected function phpUnitDoesntUnderstandArrayObject(ArrayObject $config)
     {
         $arr = (array) $config;
         foreach ($arr as $key => $value) {
-            if ($value instanceof \ArrayObject) {
+            if ($value instanceof ArrayObject) {
                 $arr[$key] = $this->phpUnitDoesntUnderstandArrayObject($value);
             }
         }
