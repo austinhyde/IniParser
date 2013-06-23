@@ -14,14 +14,9 @@ class IniParserTest extends PHPUnit_Framework_TestCase
      */
     public function testIniParserVsParseIniString()
     {
-        $ini = <<<EOF
-[helloworld]
-hello = world
-EOF;
-        $parseIniString = parse_ini_string($ini, true);
+        $parseIniString = parse_ini_file(BASE_DIR . '/tests/fixtures/fixture00.ini', true);
 
-        $iniParser = new IniParser();
-        $configObj = $iniParser->process($ini);
+        $configObj = $this->getConfig('fixture00.ini');
         $config    = $this->phpUnitDoesntUnderstandArrayObject($configObj);
 
         $this->assertSame($config, $parseIniString);
