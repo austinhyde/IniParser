@@ -238,6 +238,22 @@ EOF;
     }
 
     /**
+     * Tests that ArrayObjects are only used when the flag is set
+     * @return void
+     */
+    public function testUseArrayObject() {
+        $parser = new IniParser(BASE_DIR . '/tests/fixtures/fixture01.ini');
+        $configObj = $parser->parse();
+
+        $this->assertInstanceOf('ArrayObject', $configObj);
+
+        $parser->use_array_object = FALSE;
+        $configArr = $parser->parse();
+
+        $this->assertInternalType('array', $configArr);
+    }
+
+    /**
      * Create a config array (from the given fixture).
      *
      * @param $file
