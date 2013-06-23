@@ -2,6 +2,7 @@
 
 /**
  * [MIT Licensed](http://www.opensource.org/licenses/mit-license.php)
+ * Copyright (c) 2013 Austin Hyde
  * 
  * Implements a parser for INI files that supports
  * * Section inheritance
