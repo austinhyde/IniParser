@@ -203,6 +203,23 @@ EOF;
     }
 
     /**
+     * Tests that appending to a potentially non-existent array works as expected
+     * Spawned by https://github.com/austinhyde/IniParser/issues/6
+     * and https://github.com/austinhyde/IniParser/pull/7
+     * 
+     * @return void
+     */
+    public function testArrayAppend()
+    {
+        $configObj = $this->getConfig('fixture07.ini');
+        $config    = $this->phpUnitDoesntUnderstandArrayObject($configObj);
+        $expected = array(1, 2, 'c');
+
+        $this->assertArrayHasKey('a', $config);
+        $this->assertEquals($expected, $config['a']);
+    }
+
+    /**
      * Create a config array (from the given fixture).
      *
      * @param $file

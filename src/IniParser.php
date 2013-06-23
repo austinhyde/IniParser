@@ -148,6 +148,10 @@ class IniParser
 
                 $current =& $output;
                 while (($current_key = array_shift($path))) {
+                    if ('string' === gettype($current)) {
+                        $current = array($current);
+                    }
+
                     if (!array_key_exists($current_key, $current)) {
                         if (!empty($path)) {
                             $current[$current_key] = new \ArrayObject(array(), \ArrayObject::ARRAY_AS_PROPS);
