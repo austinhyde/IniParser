@@ -220,6 +220,24 @@ EOF;
     }
 
     /**
+     * Tests that section names are allowed to be numeric
+     * @return void
+     */
+    public function testNumericSections() {
+        $configObj = $this->getConfig('fixture08.ini');
+        $config    = $this->phpUnitDoesntUnderstandArrayObject($configObj);
+
+        $this->assertEquals(array('a', 0, 1), array_keys($config));
+        $this->assertEquals(1, $config['a']);
+
+        $this->assertArrayHasKey('b', $config[0]);
+        $this->assertEquals(2, $config[0]['b']);
+
+        $this->assertArrayHasKey('c', $config[1]);
+        $this->assertEquals(3, $config[1]['c']);
+    }
+
+    /**
      * Create a config array (from the given fixture).
      *
      * @param $file
