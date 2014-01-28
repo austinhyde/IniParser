@@ -246,6 +246,22 @@ class IniParserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests that arrays with 0 as key work as expected
+     *
+     * @return void
+     */
+    public function testArrayWithZeroAsKey()
+    {
+        $configObj = $this->getConfig('fixture09.ini');
+        $config    = $this->phpUnitDoesntUnderstandArrayObject($configObj);
+
+        $this->assertObjectHasAttribute('helloworld', $configObj);
+        $this->assertObjectHasAttribute('hello', $configObj->helloworld);
+
+        $this->assertEquals((array)$configObj->helloworld->hello, array(1 => 'world', 0 => 'hello'));
+    }
+
+    /**
      * Create a config array (from the given fixture).
      *
      * @param $file

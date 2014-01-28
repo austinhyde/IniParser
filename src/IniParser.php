@@ -151,7 +151,7 @@ class IniParser {
                 $path = explode('.', $k);
 
                 $current =& $output;
-                while (($current_key = array_shift($path))) {
+                while (($current_key = array_shift($path)) !== null) {
                     if ('string' === gettype($current)) {
                         $current = array($current);
                     }
