@@ -23,9 +23,32 @@ class IniParser {
     protected $file;
 
     /**
+     * Use ArrayObject to allow array work as object (true) or use native arrays (false)
      * @var boolean 
      */
     public $use_array_object = true;
+    
+    /**
+     * Disable array literal parsing
+     */
+    const NO_PARSE=0;
+    
+    /**
+     * Parse simple arrays using regex (ex: [a,b,c,...])
+     */
+    const PARSE_SIMPLE=1;
+    
+    /**
+     * Parse array literals using JSON, allowing advanced features like
+     * dictionaries, array nesting, etc.
+     */
+    const PARSE_JSON=2;
+
+    /**
+     * Array literals parse mode
+     * @var int 
+     */
+    public $array_literals_behaviour = self::PARSE_JSON;
 
     /**
      * @param string $file
@@ -150,7 +173,7 @@ class IniParser {
                 // transform "a.b.c = x" into $output[a][b][c] = x
                 $path = explode('.', $k);
 
-                $current =& $output;
+                $current = & $output;
                 while (($current_key = array_shift($path)) !== null) {
                     if ('string' === gettype($current)) {
                         $current = array($current);
@@ -163,7 +186,7 @@ class IniParser {
                             $current[$current_key] = null;
                         }
                     }
-                    $current =& $current[$current_key];
+                    $current = & $current[$current_key];
                 }
 
                 $value = $this->parseValue($v);
@@ -194,8 +217,44 @@ class IniParser {
      * @return mixed
      */
     protected function parseValue($value) {
+        switch ($this->array_literals_behaviour) {
+            case self::PARSE_JSON:
+                if (in_array(substr($value, 0, 1), array('[', '{')) && in_array(substr($value, -1), array(']', '}'))) {
+                    if (defined('JSON_BIGINT_AS_STRING')) {
+                        $output = json_decode($value, true, 512, JSON_BIGINT_AS_STRING);
+                    } else {
+                        $output = json_decode($value, true);
+                    }
+
+                    if ($output !== NULL) {
+                        return $output;
+                    }
+                }
+            //try regex parser for simple estructures not JSON-compatible (ex: colors = [blue, green, red])
+
+
+            case self::PARSE_SIMPLE:
+                // if the value looks like [a,b,c,...], interpret as array
+                if (preg_match('/\[\s*.*?(?:\s*,\s*.*?)*\s*\]/', $value) > 0) {
+                    return explode(',', trim(preg_replace('/\s+/', '', $value), '[]'));
+                }
+                break;
+        }
+        return $value;
+    }
+
+    /**
+     * Parses an array literal ([a,b,c,...]) into a native array
+     *
+     * @param string $value
+     *
+     * @return mixed
+     */
+    protected function parseArrayLiteral($value) {
+       
+        
         // if the value looks like [a,b,c,...], interpret as array
-        if (preg_match('/\[\s*.*?(?:\s*,\s*.*?)*\s*\]/', $value) > 0) {
+        if ($this->parse_array_literals && preg_match('/\[\s*.*?(?:\s*,\s*.*?)*\s*\]/', $value) > 0) {
             return explode(',', trim(preg_replace('/\s+/', '', $value), '[]'));
         }
         return $value;
@@ -208,4 +267,5 @@ class IniParser {
             return $array;
         }
     }
+
 }
