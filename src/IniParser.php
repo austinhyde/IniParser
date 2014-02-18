@@ -243,23 +243,6 @@ class IniParser {
         return $value;
     }
 
-    /**
-     * Parses an array literal ([a,b,c,...]) into a native array
-     *
-     * @param string $value
-     *
-     * @return mixed
-     */
-    protected function parseArrayLiteral($value) {
-       
-        
-        // if the value looks like [a,b,c,...], interpret as array
-        if ($this->parse_array_literals && preg_match('/\[\s*.*?(?:\s*,\s*.*?)*\s*\]/', $value) > 0) {
-            return explode(',', trim(preg_replace('/\s+/', '', $value), '[]'));
-        }
-        return $value;
-    }
-
     protected function getArrayValue($array = array()) {
         if ($this->use_array_object) {
             return new ArrayObject($array, ArrayObject::ARRAY_AS_PROPS);
