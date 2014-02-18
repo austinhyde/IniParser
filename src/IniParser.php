@@ -2,6 +2,7 @@
 
 /**
  * [MIT Licensed](http://www.opensource.org/licenses/mit-license.php)
+ * Copyright (c) 2013 Austin Hyde
  * 
  * Implements a parser for INI files that supports
  * * Section inheritance
@@ -24,7 +25,7 @@ class IniParser {
     /**
      * @var boolean 
      */
-    public $use_array_object = TRUE;
+    public $use_array_object = true;
 
     /**
      * @param string $file
@@ -132,7 +133,7 @@ class IniParser {
      * @return array
      */
     private function parseKeys(array $arr) {
-        $output = $this->use_array_object ? new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS) : array();
+        $output = $this->getArrayValue();
         foreach ($arr as $k => $v) {
             if (is_array($v)) {
                 // this element represents a section; recursively parse the value
@@ -149,16 +150,20 @@ class IniParser {
                 // transform "a.b.c = x" into $output[a][b][c] = x
                 $path = explode('.', $k);
 
-                $current = & $output;
-                while (($current_key = array_shift($path))) {
+                $current =& $output;
+                while (($current_key = array_shift($path)) !== null) {
+                    if ('string' === gettype($current)) {
+                        $current = array($current);
+                    }
+
                     if (!array_key_exists($current_key, $current)) {
                         if (!empty($path)) {
-                            $current[$current_key] = $this->use_array_object ? new ArrayObject(array(), ArrayObject::ARRAY_AS_PROPS) : array();
+                            $current[$current_key] = $this->getArrayValue();
                         } else {
                             $current[$current_key] = null;
                         }
                     }
-                    $current = & $current[$current_key];
+                    $current =& $current[$current_key];
                 }
 
                 $value = $this->parseValue($v);
@@ -196,4 +201,11 @@ class IniParser {
         return $value;
     }
 
+    protected function getArrayValue($array = array()) {
+        if ($this->use_array_object) {
+            return new ArrayObject($array, ArrayObject::ARRAY_AS_PROPS);
+        } else {
+            return $array;
+        }
+    }
 }

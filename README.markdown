@@ -1,5 +1,7 @@
 # IniParser
 
+[![Build Status](https://secure.travis-ci.org/austinhyde/IniParser.png?branch=master)](http://travis-ci.org/austinhyde/IniParser)
+
 IniParser is a simple parser for complex INI files, providing a number of extra syntactic features to the built-in INI parsing functions, including section inheritance, property nesting, and array literals.
 
 **IMPORTANT:** IniParser should be considered beta-quality, and there may still be bugs. Feel free to open an issue or submit a pull request, and I'll take a look at it!
