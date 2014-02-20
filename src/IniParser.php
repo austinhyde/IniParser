@@ -21,6 +21,12 @@ class IniParser {
      * @var string
      */
     protected $file;
+    
+    /**
+     * Enable/disable property nesting feature
+     * @var boolean 
+     */
+    public $property_nesting = true;
 
     /**
      * Use ArrayObject to allow array work as object (true) or use native arrays (false)
@@ -29,20 +35,26 @@ class IniParser {
     public $use_array_object = true;
     
     /**
+     * Include original sections (pre-inherit names) on the final output
+     * @var boolean
+     */
+    public $include_original_sections = false;
+
+    /**
      * Disable array literal parsing
      */
-    const NO_PARSE=0;
-    
+    const NO_PARSE = 0;
+
     /**
      * Parse simple arrays using regex (ex: [a,b,c,...])
      */
-    const PARSE_SIMPLE=1;
-    
+    const PARSE_SIMPLE = 1;
+
     /**
      * Parse array literals using JSON, allowing advanced features like
      * dictionaries, array nesting, etc.
      */
-    const PARSE_JSON=2;
+    const PARSE_JSON = 2;
 
     /**
      * Array literals parse mode
@@ -143,6 +155,11 @@ class IniParser {
                     throw new UnexpectedValueException("IniParser: In file '{$this->file}', section '{$root}': Cannot inherit from unknown section '{$s}'");
                 }
             }
+            
+            if (!$this->include_original_sections) {
+                unset($sections[$k]);
+            }
+
             $sections[$root] = $arr;
         }
 
@@ -157,23 +174,23 @@ class IniParser {
      */
     private function parseKeys(array $arr) {
         $output = $this->getArrayValue();
+        $append_regex='/\s*\+\s*$/';
         foreach ($arr as $k => $v) {
             if (is_array($v)) {
                 // this element represents a section; recursively parse the value
                 $output[$k] = $this->parseKeys($v);
             } else {
-                // value is just a value
                 // if the key ends in a +, it means we should append to the previous value, if applicable
                 $append = false;
-                if (preg_match('/\s*\+\s*$/', $k) > 0) {
-                    $k = preg_replace('/\s*\+\s*$/', '', $k);
+                if (preg_match($append_regex, $k)) {
+                    $k = preg_replace($append_regex, '', $k);
                     $append = true;
                 }
 
                 // transform "a.b.c = x" into $output[a][b][c] = x
-                $path = explode('.', $k);
-
                 $current = & $output;
+
+                $path = $this->property_nesting ? explode('.', $k) : array($k);
                 while (($current_key = array_shift($path)) !== null) {
                     if ('string' === gettype($current)) {
                         $current = array($current);
@@ -189,6 +206,7 @@ class IniParser {
                     $current = & $current[$current_key];
                 }
 
+                // parse value
                 $value = $this->parseValue($v);
 
                 if ($append && $current !== null) {
