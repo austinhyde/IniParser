@@ -138,33 +138,29 @@ class IniParser {
         }
 
         // now for each section, see if it uses inheritance
-        $section_ouput = array();
+        $output_sections = array();
         foreach ($sections as $k => $v) {
-            if (false === strpos($k, ':')) {
-                continue;
-            }
-
             $sects = array_map('trim', array_reverse(explode(':', $k)));
             $root = array_pop($sects);
             $arr = $v;
             foreach ($sects as $s) {
                 if ($s === '^') {
                     $arr = array_merge($globals, $arr);
-                } elseif (array_key_exists($s, $sections)) {
-                    $arr = array_merge($sections[$s], $arr);
+                } elseif (array_key_exists($s, $output_sections)) {
+                    $arr = array_merge($output_sections[$s], $arr);
                 } else {
                     throw new UnexpectedValueException("IniParser: In file '{$this->file}', section '{$root}': Cannot inherit from unknown section '{$s}'");
                 }
             }
 
             if ($this->include_original_sections) {
-                $section_ouput[$k] = $v;
+                $output_sections[$k] = $v;
             }
-            $section_ouput[$root] = $arr;
+            $output_sections[$root] = $arr;
         }
 
 
-        return $globals + $section_ouput;
+        return $globals + $output_sections;
     }
 
     /**
