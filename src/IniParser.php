@@ -21,7 +21,7 @@ class IniParser {
      * @var string
      */
     protected $file;
-    
+
     /**
      * Enable/disable property nesting feature
      * @var boolean 
@@ -33,7 +33,7 @@ class IniParser {
      * @var boolean 
      */
     public $use_array_object = true;
-    
+
     /**
      * Include original sections (pre-inherit names) on the final output
      * @var boolean
@@ -170,7 +170,7 @@ class IniParser {
      */
     private function parseKeys(array $arr) {
         $output = $this->getArrayValue();
-        $append_regex='/\s*\+\s*$/';
+        $append_regex = '/\s*\+\s*$/';
         foreach ($arr as $k => $v) {
             if (is_array($v)) {
                 // this element represents a section; recursively parse the value
@@ -249,8 +249,8 @@ class IniParser {
 
             case self::PARSE_SIMPLE:
                 // if the value looks like [a,b,c,...], interpret as array
-                if (preg_match('/\[\s*.*?(?:\s*,\s*.*?)*\s*\]/', $value) > 0) {
-                    return explode(',', trim(preg_replace('/\s+/', '', $value), '[]'));
+                if (preg_match('/^\[\s*.*?(?:\s*,\s*.*?)*\s*\]$/', trim($value))) {
+                    return array_map('trim', explode(',', trim(trim($value), '[]')));
                 }
                 break;
         }
