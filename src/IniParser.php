@@ -148,6 +148,8 @@ class IniParser {
                     $arr = array_merge($globals, $arr);
                 } elseif (array_key_exists($s, $output_sections)) {
                     $arr = array_merge($output_sections[$s], $arr);
+                } elseif (array_key_exists($s, $sections)) {
+                    $arr = array_merge($sections[$s], $arr);
                 } else {
                     throw new UnexpectedValueException("IniParser: In file '{$this->file}', section '{$root}': Cannot inherit from unknown section '{$s}'");
                 }
