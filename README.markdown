@@ -99,6 +99,52 @@ You can directly create arrays using the syntax `[a, b, c]` on the right hand si
 
 **NOTE:** At the moment, quoted strings inside array literals have undefined behavior.
 
+### Dictionaries and complex structures
+
+Besides arrays, you can create dictionaries and more complex structures using JSON syntax. For example, you can use:
+
+     people = '{
+        "boss": {
+           "name": "John", 
+           "age": 42 
+        }, 
+        "staff": [
+           {
+              "name": "Mark",
+              "age": 35 
+           }, 
+           {
+              "name": "Bill", 
+              "age": 44 
+           }
+        ] 
+     }'
+
+This turns into an array like:
+
+    array (
+        'boss' => 
+            array (
+              'name' => 'John',
+              'age' => 42,
+            ),
+        'staff' => 
+            array (
+              0 => 
+                array (
+                  'name' => 'Mark',
+                  'age' => 35,
+                ),
+              1 => 
+                array (
+                  'name' => 'Bill',
+                  'age' => 44,
+                ),
+            ),
+      );
+
+**NOTE:**  Remember to wrap the JSON strings in single quotes for a correct analysis. The JSON names must be enclosed in double quotes and trailing commas are not allowed.
+
 ### Property Nesting
 
 IniParser allows you to treat properties as associative arrays:
