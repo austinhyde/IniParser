@@ -18,13 +18,15 @@ Standard INI files look like this:
 
 And when parsed with PHP's built-in `parse_ini_string()` or `parse_ini_file()`, looks like
 
-    array(
-        'key' => 'value',
-        'another_key' => 'another value',
-        'section_name' => array(
-            'a_sub_key' => 'yet another value'
-        )
+```php
+array(
+    'key' => 'value',
+    'another_key' => 'another value',
+    'section_name' => array(
+        'a_sub_key' => 'yet another value'
     )
+)
+```
 
 This is great when you just want a simple configuration file, but here is a super-charged INI file that you might find in the wild:
 
@@ -55,39 +57,41 @@ And when parsed with IniParser:
 
 You get the following structure:
 
-    array(
-        'environment' => 'testing',
-        'testing' => array(
-            'debug' => '1',
-            'database' => array(
-                'connection' => 'mysql:host=127.0.0.1',
-                'name' => 'test',
-                'username' => '',
-                'password' => ''
-            ),
-            'secrets' => array('1','2','3')
+```php
+array(
+    'environment' => 'testing',
+    'testing' => array(
+        'debug' => '1',
+        'database' => array(
+            'connection' => 'mysql:host=127.0.0.1',
+            'name' => 'test',
+            'username' => '',
+            'password' => ''
         ),
-        'staging' => array(
-            'debug' => '1',
-            'database' => array(
-                'connection' => 'mysql:host=127.0.0.1',
-                'name' => 'stage',
-                'username' => 'staging',
-                'password' => '12345'
-            ),
-            'secrets' => array('1','2','3')
+        'secrets' => array('1','2','3')
+    ),
+    'staging' => array(
+        'debug' => '1',
+        'database' => array(
+            'connection' => 'mysql:host=127.0.0.1',
+            'name' => 'stage',
+            'username' => 'staging',
+            'password' => '12345'
         ),
-        'production' => array(
-            'debug' => '',
-            'database' => array(
-                'connection' => 'mysql:host=127.0.0.1',
-                'name' => 'production',
-                'username' => 'root',
-                'password' => '12345'
-            ),
-            'secrets' => array('1','2','3')
-        )
+       'secrets' => array('1','2','3')
+    ),
+    'production' => array(
+        'debug' => '',
+        'database' => array(
+            'connection' => 'mysql:host=127.0.0.1',
+            'name' => 'production',
+            'username' => 'root',
+            'password' => '12345'
+        ),
+        'secrets' => array('1','2','3')
     )
+)
+```
 
 ## Supported Features
 
@@ -122,26 +126,24 @@ Besides arrays, you can create dictionaries and more complex structures using JS
 
 This turns into an array like:
 
-    array (
-        'boss' => 
-            array (
-              'name' => 'John',
-              'age' => 42,
-            ),
-        'staff' => 
-            array (
-              0 => 
-                array (
-                  'name' => 'Mark',
-                  'age' => 35,
-                ),
-              1 => 
-                array (
-                  'name' => 'Bill',
-                  'age' => 44,
-                ),
-            ),
-      );
+```php
+array(
+    'boss' => array(
+        'name' => 'John',
+        'age' => 42
+    ),
+    'staff' => array(
+        array (
+            'name' => 'Mark',
+            'age' => 35,
+        ),
+        array (
+            'name' => 'Bill',
+            'age' => 44,
+        ),
+    ),
+)
+```
 
 **NOTE:**  Remember to wrap the JSON strings in single quotes for a correct analysis. The JSON names must be enclosed in double quotes and trailing commas are not allowed.
 
@@ -155,15 +157,17 @@ IniParser allows you to treat properties as associative arrays:
 
 This turns into an array like:
 
-    array (
-        'person' => array (
-            'age' => 42,
-            'name' => array (
-                'first' => 'John',
-                'last' => 'Doe'
-            )
+```php
+array (
+    'person' => array (
+        'age' => 42,
+        'name' => array (
+            'first' => 'John',
+            'last' => 'Doe'
         )
     )
+)
+```
 
 ### Section Inheritance
 
@@ -183,16 +187,18 @@ During the inheritance process, if a key ends in a `+`, the merge behavior chang
 
 would be parsed into the following:
 
-    array (
-        'parent' => array (
-            'arr' => array('a','b','c'),
-            'val' => 'foo'
-        ),
-        'child' => array (
-            'arr' => array('a','b','c','x','y','z'),
-            'val' => 'foobar'
-        )
+```php
+array(
+    'parent' => array(
+        'arr' => array('a','b','c'),
+        'val' => 'foo'
+    ),
+    'child' => array(
+        'arr' => array('a','b','c','x','y','z'),
+        'val' => 'foobar'
     )
+)
+```
 
 *If you can think of a more useful operation than concatenation for non-array types, please open an issue*
 
@@ -204,16 +210,20 @@ Finally, it is possible to inherit from the special `^` section, representing th
 
 Parses to:
 
-    array (
-        'foo' => 'bar',
-        'sect' => array (
-            'foo' => 'bar'
-        )
+```php
+array (
+    'foo' => 'bar',
+    'sect' => array (
+        'foo' => 'bar'
     )
+)
+```
 
 ### ArrayObject
 
 As an added bonus, IniParser also allows you to access the values OO-style:
 
-    echo $config->production->database->connection; // output: mysql:host=127.0.0.1
-    echo $config->staging->debug; // output: 1
+```php
+echo $config->production->database->connection; // output: mysql:host=127.0.0.1
+echo $config->staging->debug; // output: 1
+```
