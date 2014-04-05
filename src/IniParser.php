@@ -246,9 +246,8 @@ class IniParser {
                         return $output;
                     }
                 }
-            //try regex parser for simple estructures not JSON-compatible (ex: colors = [blue, green, red])
-
-
+            // fallthrough
+            // try regex parser for simple estructures not JSON-compatible (ex: colors = [blue, green, red])
             case self::PARSE_SIMPLE:
                 // if the value looks like [a,b,c,...], interpret as array
                 if (preg_match('/^\[\s*.*?(?:\s*,\s*.*?)*\s*\]$/', trim($value))) {
