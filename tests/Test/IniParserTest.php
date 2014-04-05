@@ -346,6 +346,23 @@ class IniParserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests that appending to a potentially non-existent array works as expected
+     * when also using property nesting.
+     *
+     * @return void
+     */
+    public function testNestedArrayAppend()
+    {
+        $configObj = $this->getConfig('fixture11.ini');
+        $config    = $this->phpUnitDoesntUnderstandArrayObject($configObj);
+        $expected = array(1, 2, 'c');
+
+        $this->assertArrayHasKey('nesting', $config);
+        $this->assertArrayHasKey('a', $config['nesting']);
+        $this->assertEquals($expected, $config['nesting']['a']);
+    }
+
+    /**
      * Create a config array (from the given fixture).
      *
      * @param $file
