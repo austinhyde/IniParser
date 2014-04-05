@@ -250,8 +250,7 @@ class IniParserTest extends PHPUnit_Framework_TestCase
      *
      * @return void
      */
-    public function testArrayWithZeroAsKey()
-    {
+    public function testArrayWithZeroAsKey() {
         $configObj = $this->getConfig('fixture09.ini');
         $config    = $this->phpUnitDoesntUnderstandArrayObject($configObj);
 
@@ -291,6 +290,42 @@ class IniParserTest extends PHPUnit_Framework_TestCase
         );
 
         $this->assertEquals($array, $config['people']);
+    }
+
+    public function testNoPropertyNesting() {
+        $configObj = $this->getConfig('fixture03.ini',
+            array('property_nesting' => false));
+        $config = $this->phpUnitDoesntUnderstandArrayObject($configObj);
+
+        $expected = array(
+            'environment' => 'testing',
+            'testing' => array(
+                'debug' => true,
+                'database.connection' => 'mysql:host=127.0.0.1',
+                'database.name' => 'test',
+                'database.username' => '',
+                'database.password' => '',
+                'secrets' => array(1, 2, 3)
+            ),
+            'staging' => array(
+                'debug' => true,
+                'database.connection' => 'mysql:host=127.0.0.1',
+                'database.name' => 'stage',
+                'database.username' => 'staging',
+                'database.password' => 12345,
+                'secrets' => array(1, 2, 3)
+            ),
+            'production' => array(
+                'debug' => false,
+                'database.connection' => 'mysql:host=127.0.0.1',
+                'database.name' => 'production',
+                'database.username' => 'root',
+                'database.password' => 12345,
+                'secrets' => array(1, 2, 3)
+            )
+        );
+
+        $this->assertEquals($expected, $config);
     }
 
     /**
