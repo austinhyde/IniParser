@@ -267,25 +267,22 @@ class IniParserTest extends PHPUnit_Framework_TestCase
      * @return void
      */
     public function testJson() {
-        $configObj = $this->getConfig('fixture10.ini');
+        $configObj = $this->getConfig('fixture10.ini',
+            array('array_literals_behavior' => IniParser::PARSE_JSON));
         $config = $this->phpUnitDoesntUnderstandArrayObject($configObj);
 
         $this->assertObjectHasAttribute('people', $configObj);
 
         $array = array(
-            'boss' =>
-            array(
+            'boss' => array(
                 'name' => 'John',
                 'age' => 42,
             ),
-            'staff' =>
-            array(
-                0 =>
+            'staff' => array(
                 array(
                     'name' => 'Mark',
                     'age' => 35,
                 ),
-                1 =>
                 array(
                     'name' => 'Bill',
                     'age' => 44,
@@ -293,7 +290,7 @@ class IniParserTest extends PHPUnit_Framework_TestCase
             ),
         );
 
-        $this->assertEquals($config['people'], $array);
+        $this->assertEquals($array, $config['people']);
     }
 
     /**

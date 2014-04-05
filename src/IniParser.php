@@ -60,7 +60,7 @@ class IniParser {
      * Array literals parse mode
      * @var int 
      */
-    public $array_literals_behaviour = self::PARSE_JSON;
+    public $array_literals_behavior = self::PARSE_SIMPLE;
 
     /**
      * @param string $file
@@ -233,7 +233,7 @@ class IniParser {
      * @return mixed
      */
     protected function parseValue($value) {
-        switch ($this->array_literals_behaviour) {
+        switch ($this->array_literals_behavior) {
             case self::PARSE_JSON:
                 if (in_array(substr($value, 0, 1), array('[', '{')) && in_array(substr($value, -1), array(']', '}'))) {
                     if (defined('JSON_BIGINT_AS_STRING')) {
