@@ -6,6 +6,24 @@ IniParser is a simple parser for complex INI files, providing a number of extra 
 
 **IMPORTANT:** IniParser should be considered beta-quality, and there may still be bugs. Feel free to open an issue or submit a pull request, and I'll take a look at it!
 
+## Installing by [Composer](https://getcomposer.org)
+
+Set your `composer.json` file to have :
+
+```json
+{
+	"require": {
+		"austinhyde/iniparser": "dev-master"
+	}
+}
+```
+
+Then install the dependencies :
+
+```shell
+composer install
+```
+
 ## An Example
 
 Standard INI files look like this:
