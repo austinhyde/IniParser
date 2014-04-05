@@ -40,17 +40,14 @@ class IniParserTest extends PHPUnit_Framework_TestCase
         $configObj = $this->getConfig('fixture01.ini');
         $config    = $this->phpUnitDoesntUnderstandArrayObject($configObj);
 
-        $this->assertArrayHasKey('production', $config);
+        $expected = array(
+            'production' => array(
+                'hello' => 'world',
+                'super' => array('funny' => 'config')
+            )
+        );
 
-        $productionConfig = $config['production'];
-
-        $this->assertArrayHasKey('hello', $productionConfig);
-        $this->assertArrayHasKey('super', $productionConfig);
-
-        $super = $productionConfig['super'];
-
-        $this->assertArrayHasKey('funny', $super);
-        $this->assertEquals('config', $super['funny']);
+        $this->assertSame($expected, $config);
     }
 
     /**
@@ -63,10 +60,16 @@ class IniParserTest extends PHPUnit_Framework_TestCase
         $configObj = $this->getConfig('fixture02.ini');
         $config    = $this->phpUnitDoesntUnderstandArrayObject($configObj);
 
-        $this->assertArrayHasKey('prod', $config);
-        $this->assertArrayHasKey('dev', $config);
+        $expected = array(
+            'prod' => array(
+                'hello' => 'world'
+            ),
+            'dev' => array(
+                'hello' => 'world'
+            )
+        );
 
-        $this->assertSame($config['prod'], $config['dev']);
+        $this->assertSame($expected, $config);
     }
 
     /**
@@ -171,27 +174,41 @@ class IniParserTest extends PHPUnit_Framework_TestCase
         $configObj = $this->getConfig('fixture03.ini');
         $config    = $this->phpUnitDoesntUnderstandArrayObject($configObj);
 
-        $this->assertArrayHasKey('environment', $config);
-        $this->assertEquals('testing', $config['environment']);
+        $expected = array(
+            'environment' => 'testing',
+            'testing' => array(
+                'debug' => true,
+                'database' => array(
+                    'connection' => 'mysql:host=127.0.0.1',
+                    'name' => 'test',
+                    'username' => '',
+                    'password' => ''
+                ),
+                'secrets' => array(1, 2, 3)
+            ),
+            'staging' => array(
+                'debug' => true,
+                'database' => array(
+                    'connection' => 'mysql:host=127.0.0.1',
+                    'name' => 'stage',
+                    'username' => 'staging',
+                    'password' => 12345
+                ),
+                'secrets' => array(1, 2, 3)
+            ),
+            'production' => array(
+                'debug' => false,
+                'database' => array(
+                    'connection' => 'mysql:host=127.0.0.1',
+                    'name' => 'production',
+                    'username' => 'root',
+                    'password' => 12345
+                ),
+                'secrets' => array(1, 2, 3)
+            )
+        );
 
-        $this->assertArrayHasKey('testing', $config);
-        $this->assertArrayHasKey('staging', $config);
-        $this->assertArrayHasKey('production', $config);
-
-        $confTesting = $config['testing'];
-        $confStaging = $config['staging'];
-        $confProd    = $config['production'];
-
-        $this->assertEquals('', $confTesting['database']['username']);
-        $this->assertEquals('staging', $confStaging['database']['username']);
-        $this->assertEquals('root', $confProd['database']['username']);
-
-        $this->assertEmpty($confTesting['database']['password']);
-        $this->assertEquals($confStaging['database']['password'], $confProd['database']['password']);
-
-        $this->assertEquals('1', $confTesting['debug']);
-        $this->assertEquals('1', $confStaging['debug']);
-        $this->assertEquals('', $confProd['debug']);
+        $this->assertEquals($expected, $config);
     }
 
     /**
