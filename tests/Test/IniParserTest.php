@@ -303,9 +303,12 @@ class IniParserTest extends PHPUnit_Framework_TestCase
      *
      * @return array
      */
-    protected function getConfig($file)
+    protected function getConfig($file, $options = array())
     {
         $parser = new IniParser(BASE_DIR . '/tests/fixtures/' . $file);
+        foreach ($options as $key => $value) {
+            $parser->$key = $value;
+        }
         $config = $parser->parse();
         return $config;
     }
