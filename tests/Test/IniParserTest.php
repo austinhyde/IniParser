@@ -262,6 +262,41 @@ class IniParserTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Tests that json is parsed as expected
+     *
+     * @return void
+     */
+    public function testJson() {
+        $configObj = $this->getConfig('fixture10.ini');
+        $config = $this->phpUnitDoesntUnderstandArrayObject($configObj);
+
+        $this->assertObjectHasAttribute('people', $configObj);
+
+        $array = array(
+            'boss' =>
+            array(
+                'name' => 'John',
+                'age' => 42,
+            ),
+            'staff' =>
+            array(
+                0 =>
+                array(
+                    'name' => 'Mark',
+                    'age' => 35,
+                ),
+                1 =>
+                array(
+                    'name' => 'Bill',
+                    'age' => 44,
+                ),
+            ),
+        );
+
+        $this->assertEquals($config['people'], $array);
+    }
+
+    /**
      * Create a config array (from the given fixture).
      *
      * @param $file

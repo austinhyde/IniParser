@@ -23,9 +23,44 @@ class IniParser {
     protected $file;
 
     /**
+     * Enable/disable property nesting feature
+     * @var boolean 
+     */
+    public $property_nesting = true;
+
+    /**
+     * Use ArrayObject to allow array work as object (true) or use native arrays (false)
      * @var boolean 
      */
     public $use_array_object = true;
+
+    /**
+     * Include original sections (pre-inherit names) on the final output
+     * @var boolean
+     */
+    public $include_original_sections = false;
+
+    /**
+     * Disable array literal parsing
+     */
+    const NO_PARSE = 0;
+
+    /**
+     * Parse simple arrays using regex (ex: [a,b,c,...])
+     */
+    const PARSE_SIMPLE = 1;
+
+    /**
+     * Parse array literals using JSON, allowing advanced features like
+     * dictionaries, array nesting, etc.
+     */
+    const PARSE_JSON = 2;
+
+    /**
+     * Array literals parse mode
+     * @var int 
+     */
+    public $array_literals_behaviour = self::PARSE_JSON;
 
     /**
      * @param string $file
@@ -103,28 +138,31 @@ class IniParser {
         }
 
         // now for each section, see if it uses inheritance
+        $output_sections = array();
         foreach ($sections as $k => $v) {
-            if (false === strpos($k, ':')) {
-                continue;
-            }
-
             $sects = array_map('trim', array_reverse(explode(':', $k)));
             $root = array_pop($sects);
             $arr = $v;
             foreach ($sects as $s) {
                 if ($s === '^') {
                     $arr = array_merge($globals, $arr);
+                } elseif (array_key_exists($s, $output_sections)) {
+                    $arr = array_merge($output_sections[$s], $arr);
                 } elseif (array_key_exists($s, $sections)) {
                     $arr = array_merge($sections[$s], $arr);
                 } else {
                     throw new UnexpectedValueException("IniParser: In file '{$this->file}', section '{$root}': Cannot inherit from unknown section '{$s}'");
                 }
             }
-            $sections[$root] = $arr;
+
+            if ($this->include_original_sections) {
+                $output_sections[$k] = $v;
+            }
+            $output_sections[$root] = $arr;
         }
 
 
-        return $globals + $sections;
+        return $globals + $output_sections;
     }
 
     /**
@@ -134,23 +172,23 @@ class IniParser {
      */
     private function parseKeys(array $arr) {
         $output = $this->getArrayValue();
+        $append_regex = '/\s*\+\s*$/';
         foreach ($arr as $k => $v) {
             if (is_array($v)) {
                 // this element represents a section; recursively parse the value
                 $output[$k] = $this->parseKeys($v);
             } else {
-                // value is just a value
                 // if the key ends in a +, it means we should append to the previous value, if applicable
                 $append = false;
-                if (preg_match('/\s*\+\s*$/', $k) > 0) {
-                    $k = preg_replace('/\s*\+\s*$/', '', $k);
+                if (preg_match($append_regex, $k)) {
+                    $k = preg_replace($append_regex, '', $k);
                     $append = true;
                 }
 
                 // transform "a.b.c = x" into $output[a][b][c] = x
-                $path = explode('.', $k);
+                $current = & $output;
 
-                $current =& $output;
+                $path = $this->property_nesting ? explode('.', $k) : array($k);
                 while (($current_key = array_shift($path)) !== null) {
                     if ('string' === gettype($current)) {
                         $current = array($current);
@@ -163,9 +201,10 @@ class IniParser {
                             $current[$current_key] = null;
                         }
                     }
-                    $current =& $current[$current_key];
+                    $current = & $current[$current_key];
                 }
 
+                // parse value
                 $value = $this->parseValue($v);
 
                 if ($append && $current !== null) {
@@ -194,9 +233,28 @@ class IniParser {
      * @return mixed
      */
     protected function parseValue($value) {
-        // if the value looks like [a,b,c,...], interpret as array
-        if (preg_match('/\[\s*.*?(?:\s*,\s*.*?)*\s*\]/', $value) > 0) {
-            return explode(',', trim(preg_replace('/\s+/', '', $value), '[]'));
+        switch ($this->array_literals_behaviour) {
+            case self::PARSE_JSON:
+                if (in_array(substr($value, 0, 1), array('[', '{')) && in_array(substr($value, -1), array(']', '}'))) {
+                    if (defined('JSON_BIGINT_AS_STRING')) {
+                        $output = json_decode($value, true, 512, JSON_BIGINT_AS_STRING);
+                    } else {
+                        $output = json_decode($value, true);
+                    }
+
+                    if ($output !== NULL) {
+                        return $output;
+                    }
+                }
+            //try regex parser for simple estructures not JSON-compatible (ex: colors = [blue, green, red])
+
+
+            case self::PARSE_SIMPLE:
+                // if the value looks like [a,b,c,...], interpret as array
+                if (preg_match('/^\[\s*.*?(?:\s*,\s*.*?)*\s*\]$/', trim($value))) {
+                    return array_map('trim', explode(',', trim(trim($value), '[]')));
+                }
+                break;
         }
         return $value;
     }
@@ -208,4 +266,5 @@ class IniParser {
             return $array;
         }
     }
+
 }
