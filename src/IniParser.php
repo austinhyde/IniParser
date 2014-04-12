@@ -174,7 +174,7 @@ class IniParser {
         $output = $this->getArrayValue();
         $append_regex = '/\s*\+\s*$/';
         foreach ($arr as $k => $v) {
-            if (is_array($v)) {
+            if (is_array($v) && FALSE === strpos($k, '.')) {
                 // this element represents a section; recursively parse the value
                 $output[$k] = $this->parseKeys($v);
             } else {
@@ -205,7 +205,10 @@ class IniParser {
                 }
 
                 // parse value
-                $value = $this->parseValue($v);
+                $value = $v;
+                if (!is_array($v)) {
+                  $value = $this->parseValue($v);
+                }
 
                 if ($append && $current !== null) {
                     if (is_array($value)) {
